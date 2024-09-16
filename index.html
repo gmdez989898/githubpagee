@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro e Inicio de Sesión</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            background-color: #4a90e2;
+            border-bottom: 1px solid #ddd;
+            color: #fff;
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+        .navbar-nav {
+            flex-grow: 1;
+            justify-content: center;
+        }
+        .navbar-nav .nav-item {
+            margin: 0 10px;
+        }
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .footer {
+            background-color: #4a90e2;
+            border-top: 1px solid #ddd;
+            padding: 10px 0;
+            text-align: center;
+            color: #fff;
+        }
+        .footer .nav-link {
+            color: #fff;
+        }
+        .footer .nav-link:hover {
+            color: #f8f9fa;
+        }
+        .post {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .post img, .post video {
+            max-width: 100%;
+            height: auto;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+        }
+        .chat-message .sender {
+            font-weight: bold;
+        }
+        .chat-message .timestamp {
+            font-size: 0.8em;
+            color: #777;
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .chat-header {
+            background-color: #4a90e2;
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .chat-header .username {
+            flex: 1;
+            text-align: center;
+        }
+        .chat-header .status {
+            font-size: 0.8em;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
+        .chat-input {
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+        }
+        .chat-input input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .post-actions .action-icon {
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        .liked {
+            color: red;
+        }
+        .like-count {
+            font-size: 0.9em;
+            color: #777;
+        }
+        .typing-indicator {
+            font-size: 0.8em;
+            color: #777;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Registro e Inicio de Sesión -->
+    <div class="container mt-5" id="loginRegisterSection">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="login-tab" data-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="register-tab" data-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">Registrarse</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                        <form id="loginForm" class="mt-4">
+                            <div class="form-group">
+                                <label for="loginUsername">Usuario</label>
+                                <input type="text" class="form-control" id="loginUsername" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginPassword">Contraseña</label>
+                                <input type="password" class="form-control" id="loginPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                        <form id="registerForm" class="mt-4">
+                            <div class="form-group">
+                                <label for="registerUsername">Usuario</label>
+                                <input type="text" class="form-control" id="registerUsername" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerPassword">Contraseña</label>
+                                <input type="password" class="form-control" id="registerPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Registrarse</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menú Principal -->
+    <div class="container mt-5" id="menuSection" style="display: none;">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <a class="navbar-brand" href="#">RED</a>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logoutLink">Cerrar Sesión</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Aquí puedes agregar el contenido principal de la página -->
+            <div id="postsContainer">
+                <!-- Aquí se mostrarán las publicaciones -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <ul class="nav justify-content-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="searchIcon"><i class="fas fa-search"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="addPostIcon"><i class="fas fa-plus"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="chatIcon"><i class="fas fa-comment"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal para agregar publicación -->
+    <div class="modal fade" id="addPostModal" tabindex="-1" aria-labelledby="addPostModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPostModalLabel">Agregar Publicación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addPostForm">
+                        <div class="form-group">
+                            <label for="postContent">Contenido</label>
+                            <textarea class="form-control" id="postContent" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="postImage">Imagen</label>
+                            <input type="file" class="form-control-file" id="postImage">
+                        </div>
+                        <div class="form-group">
+                            <label for="postVideo">Video</label>
+                            <input type="file" class="form-control-file" id="postVideo">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Publicar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para buscar usuarios -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchModalLabel">Buscar Usuarios</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar usuarios">
+                    <ul id="searchResults" class="list-group mt-3">
+                        <!-- Aquí se mostrarán los resultados de búsqueda -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para chats -->
+    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatModalLabel">Chats</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul id="chatList" class="list-group">
+                        <!-- Aquí se mostrarán las conversaciones -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat en pantalla completa -->
+    <div id="fullScreenChat" style="display: none;">
+        <div class="chat-container">
+            <div class="chat-header">
+                <a href="#" id="backArrow"><i class="fas fa-arrow-left"></i></a>
+                <div class="username" id="chatUsername"></div>
+                <div class="status" id="chatStatus"></div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Aquí se mostrarán los mensajes del chat -->
+            </div>
+            <div class="chat-input">
+                <form id="sendMessageForm">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="messageInput" placeholder="Escribe un mensaje" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                    <button type="button" class="btn btn-secondary" id="sendMedia">+</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para enviar medios (imágenes o videos) -->
+    <div class="modal fade" id="mediaModal" tabindex="-1" aria-labelledby="mediaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mediaModalLabel">Enviar Medios</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="sendMediaForm">
+                        <div class="form-group">
+                            <label for="mediaImage">Imagen</label>
+                            <input type="file" class="form-control-file" id="mediaImage">
+                        </div>
+                        <div class="form-group">
+                            <label for="mediaVideo">Video</label>
+                            <input type="file" class="form-control-file" id="mediaVideo">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Simulación de usuarios registrados
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let currentChatUser = null;
+        let conversations = JSON.parse(localStorage.getItem('conversations')) || {};
+        let isTyping = false;
+        let likeCounts = JSON.parse(localStorage.getItem('likeCounts')) || {};
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            // Aquí puedes agregar la lógica para verificar las credenciales
+            const user = users.find(user => user.username === username && user.password === password);
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                alert(`Iniciando sesión con ${username}`);
+                document.getElementById('loginRegisterSection').style.display = 'none';
+                document.getElementById('menuSection').style.display = 'block';
+            } else {
+                alert('Credenciales incorrectas');
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+            // Aquí puedes agregar la lógica para verificar si el usuario ya existe
+            const existingUser = users.find(user => user.username === username);
+            if (existingUser) {
+                alert('El usuario ya existe');
+            } else {
+                alert(`Registrando nuevo usuario con ${username}`);
+                users.push({ username, password });
+                localStorage.setItem('users', JSON.stringify(users));
+                currentUser = { username, password };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                // Redirigir al menú principal después del registro exitoso
+                document.getElementById('loginRegisterSection').style.display = 'none';
+                document.getElementById('menuSection').style.display = 'block';
+            }
+        });
+
+        document.getElementById('searchIcon').addEventListener('click', function() {
+            $('#searchModal').modal('show');
+            displayAllUsers();
+        });
+
+        document.getElementById('addPostIcon').addEventListener('click', function() {
+            $('#addPostModal').modal('show');
+        });
+
+        document.getElementById('chatIcon').addEventListener('click', function() {
+            $('#chatModal').modal('show');
+        });
+
+        document.getElementById('addPostForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const content = document.getElementById('postContent').value;
+            const image = document.getElementById('postImage').files[0];
+            const video = document.getElementById('postVideo').files[0];
+
+            const postElement = document.createElement('div');
+            postElement.classList.add('post');
+
+            if (image) {
+                const imgElement = document.createElement('img');
+                imgElement.src = URL.createObjectURL(image);
+                postElement.appendChild(imgElement);
+            } else if (video) {
+                const videoElement = document.createElement('video');
+                videoElement.src = URL.createObjectURL(video);
+                videoElement.controls = true;
+                postElement.appendChild(videoElement);
+            }
+
+            const contentElement = document.createElement('p');
+            contentElement.textContent = content;
+            postElement.appendChild(contentElement);
+
+            const actionsElement = document.createElement('div');
+            actionsElement.classList.add('post-actions');
+            const likeIcon = document.createElement('i');
+            likeIcon.classList.add('fas', 'fa-heart', 'action-icon');
+            likeIcon.addEventListener('click', () => likePost(postElement));
+            const commentIcon = document.createElement('i');
+            commentIcon.classList.add('fas', 'fa-comment', 'action-icon');
+            commentIcon.addEventListener('click', () => commentPost(postElement));
+            actionsElement.appendChild(likeIcon);
+            actionsElement.appendChild(commentIcon);
+            postElement.appendChild(actionsElement);
+
+            document.getElementById('postsContainer').appendChild(postElement);
+            $('#addPostModal').modal('hide');
+        });
+
+        function likePost(postElement) {
+            const likeIcon = postElement.querySelector('.fa-heart');
+            likeIcon.classList.toggle('liked');
+            const postId = postElement.id;
+            if (!likeCounts[postId]) {
+                likeCounts[postId] = 0;
+            }
+            likeCounts[postId] += likeIcon.classList.contains('liked') ? 1 : -1;
+            localStorage.setItem('likeCounts', JSON.stringify(likeCounts));
+            const likeCountElement = postElement.querySelector('.like-count');
+            if (!likeCountElement) {
+                const likeCountElement = document.createElement('div');
+                likeCountElement.classList.add('like-count');
+                postElement.appendChild(likeCountElement);
+            }
+            likeCountElement.textContent = `${likeCounts[postId]} me gusta`;
+        }
+
+        function commentPost(postElement) {
+            const comment = prompt('Escribe un comentario:');
+            if (comment) {
+                const commentElement = document.createElement('div');
+                commentElement.classList.add('comment');
+                commentElement.textContent = `${currentUser.username}: ${comment}`;
+                postElement.appendChild(commentElement);
+            }
+        }
+
+        function displayAllUsers() {
+            const searchResultsElement = document.getElementById('searchResults');
+            searchResultsElement.innerHTML = '';
+            users.forEach(user => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('list-group-item');
+                listItem.textContent = user.username;
+                const sendMessageButton = document.createElement('button');
+                sendMessageButton.textContent = 'Enviar Mensaje';
+                sendMessageButton.classList.add('btn', 'btn-primary', 'float-right');
+                sendMessageButton.addEventListener('click', () => openChat(user.username));
+                listItem.appendChild(sendMessageButton);
+                searchResultsElement.appendChild(listItem);
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const results = users.filter(user => user.username.toLowerCase().includes(query));
+            const searchResultsElement = document.getElementById('searchResults');
+            searchResultsElement.innerHTML = '';
+
+            if (results.length === 0) {
+                const noResultsItem = document.createElement('li');
+                noResultsItem.classList.add('list-group-item');
+                noResultsItem.textContent = 'Usuario no encontrado';
+                searchResultsElement.appendChild(noResultsItem);
+            } else {
+                results.forEach(user => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('list-group-item');
+                    listItem.textContent = user.username;
+                    const sendMessageButton = document.createElement('button');
+                    sendMessageButton.textContent = 'Enviar Mensaje';
+                    sendMessageButton.classList.add('btn', 'btn-primary', 'float-right');
+                    sendMessageButton.addEventListener('click', () => openChat(user.username));
+                    listItem.appendChild(sendMessageButton);
+                    searchResultsElement.appendChild(listItem);
+                });
+            }
+        });
+
+        function openChat(username) {
+            currentChatUser = username;
+            const chatMessagesElement = document.getElementById('chatMessages');
+            chatMessagesElement.innerHTML = '';
+            document.getElementById('menuSection').style.display = 'none';
+            document.getElementById('fullScreenChat').style.display = 'block';
+            document.getElementById('chatUsername').textContent = username;
+            document.getElementById('chatStatus').textContent = 'En línea';
+
+            // Mostrar conversación almacenada
+            if (conversations[username]) {
+                conversations[username].forEach(message => {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('chat-message');
+                    messageElement.innerHTML = `
+                        <div class="sender">${message.sender}</div>
+                        <div class="message-content">${message.content}</div>
+                        <div class="timestamp">${message.timestamp}</div>
+                    `;
+                    chatMessagesElement.appendChild(messageElement);
+                });
+            }
+        }
+
+        document.getElementById('sendMessageForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const message = document.getElementById('messageInput').value;
+            const chatMessagesElement = document.getElementById('chatMessages');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message');
+            const timestamp = new Date().toLocaleTimeString();
+            messageElement.innerHTML = `
+                <div class="sender">${currentUser.username}</div>
+                <div class="message-content">${message}</div>
+                <div class="timestamp">${timestamp}</div>
+            `;
+            chatMessagesElement.appendChild(messageElement);
+            document.getElementById('messageInput').value = '';
+
+            // Almacenar el mensaje en la conversación
+            if (!conversations[currentChatUser]) {
+                conversations[currentChatUser] = [];
+            }
+            conversations[currentChatUser].push({
+                sender: currentUser.username,
+                content: message,
+                timestamp: timestamp
+            });
+            localStorage.setItem('conversations', JSON.stringify(conversations));
+
+            // Almacenar el chat en la lista de chats
+            const chatListElement = document.getElementById('chatList');
+            const chatItem = document.createElement('li');
+            chatItem.classList.add('list-group-item');
+            chatItem.textContent = currentChatUser;
+            chatItem.addEventListener('click', () => openChat(currentChatUser));
+            chatListElement.appendChild(chatItem);
+        });
+
+        document.getElementById('backArrow').addEventListener('click', function() {
+            document.getElementById('menuSection').style.display = 'block';
+            document.getElementById('fullScreenChat').style.display = 'none';
+        });
+
+        document.getElementById('logoutLink').addEventListener('click', function() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            document.getElementById('loginRegisterSection').style.display = 'block';
+            document.getElementById('menuSection').style.display = 'none';
+            document.getElementById('fullScreenChat').style.display = 'none';
+        });
+
+        // Mostrar usuarios con los que has conversado al hacer clic en el icono de chat
+        document.getElementById('chatIcon').addEventListener('click', function() {
+            const chatListElement = document.getElementById('chatList');
+            chatListElement.innerHTML = '';
+            for (const user in conversations) {
+                const chatItem = document.createElement('li');
+                chatItem.classList.add('list-group-item');
+                chatItem.textContent = user;
+                chatItem.addEventListener('click', () => openChat(user));
+                chatListElement.appendChild(chatItem);
+            }
+            $('#chatModal').modal('show');
+        });
+
+        // Indicador de escritura
+        document.getElementById('messageInput').addEventListener('input', function() {
+            isTyping = true;
+            document.getElementById('chatStatus').textContent = 'Escribiendo...';
+            setTimeout(() => {
+                isTyping = false;
+                document.getElementById('chatStatus').textContent = 'En línea';
+            }, 3000);
+        });
+
+        // Enviar medios (imágenes o videos)
+        document.getElementById('sendMedia').addEventListener('click', function() {
+            $('#mediaModal').modal('show');
+        });
+
+        document.getElementById('sendMediaForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const image = document.getElementById('mediaImage').files[0];
+            const video = document.getElementById('mediaVideo').files[0];
+            const chatMessagesElement = document.getElementById('chatMessages');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message');
+            const timestamp = new Date().toLocaleTimeString();
+
+            if (image) {
+                const imgElement = document.createElement('img');
+                imgElement.src = URL.createObjectURL(image);
+                messageElement.appendChild(imgElement);
+            } else if (video) {
+                const videoElement = document.createElement('video');
+                videoElement.src = URL.createObjectURL(video);
+                videoElement.controls = true;
+                messageElement.appendChild(videoElement);
+            }
+
+            messageElement.innerHTML += `
+                <div class="sender">${currentUser.username}</div>
+                <div class="timestamp">${timestamp}</div>
+            `;
+            chatMessagesElement.appendChild(messageElement);
+
+            // Almacenar el mensaje en la conversación
+            if (!conversations[currentChatUser]) {
+                conversations[currentChatUser] = [];
+            }
+            conversations[currentChatUser].push({
+                sender: currentUser.username,
+                content: image ? 'Imagen' : 'Video',
+                timestamp: timestamp
+            });
+            localStorage.setItem('conversations', JSON.stringify(conversations));
+
+            $('#mediaModal').modal('hide');
+        });
+    </script>
+</body>
+</html>
